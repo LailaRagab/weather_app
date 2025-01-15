@@ -16,80 +16,80 @@ class WeatherApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => GetWeatherCubit(),
-      child:
-      Builder(
-          builder: (context) {
-            // return
-            //   BlocBuilder <GetWeatherCubit, GetWeatherStates>(
-            //     builder: (context, state) {
-                  return MaterialApp(
-                    theme: ThemeData(
-                        primarySwatch: 
-                        // Colors.amber
-                        themeColor(
-                            BlocProvider
-                                .of<GetWeatherCubit>(context)
-                                .weatherModelFirst
-                                ?.condition)
-                    ),
-                    debugShowCheckedModeBanner: false,
-                    routes: {
-                      Home.routeName: (_) =>  Home(),
-                      Search.routeName: (_) => Search(),
-                    },
-                    initialRoute: Home.routeName,
-                  );
-            //     }
-            // );
-          }
+      child: BlocBuilder<GetWeatherCubit, GetWeatherStates>(
+        builder: (context, state) {
+          final backgroundColor = _getBackgroundColor(state);
+
+          return MaterialApp(
+            theme: ThemeData(
+              scaffoldBackgroundColor: backgroundColor,
+              appBarTheme: const AppBarTheme(
+                shape: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black),
+                ),
+              ),
+            ),
+            debugShowCheckedModeBanner: false,
+            routes: {
+              Home.routeName: (_) => const Home(),
+              Search.routeName: (_) =>  Search(),
+            },
+            initialRoute: Home.routeName,
+          );
+        },
       ),
     );
   }
 
-
-  MaterialColor themeColor(String? weatherState) {
-    if (weatherState == null) {
-      return Colors.blue;
+  Color _getBackgroundColor(GetWeatherStates state) {
+    if (state is WithWeatherState) {
+      return _mapWeatherToColor(state.weatherModelSecond.condition);
     }
-    switch (weatherState.toLowerCase()) {
+    return Colors.white;
+  }
+
+  Color _mapWeatherToColor(String? condition) {
+    if (condition == null) return Colors.blueGrey;
+
+    switch (condition.toLowerCase()) {
       case "sunny":
-        return Colors.amber;
+        return Colors.amber[100]!;
       case "clear":
-        return Colors.deepPurple;
+        return Colors.deepPurple[100]!;
       case "partly cloudy":
-        return Colors.lightBlue;
+        return Colors.lightBlue[50]!;
       case "cloudy":
-        return Colors.grey;
+        return Colors.grey[300]!;
       case "overcast":
-        return Colors.blueGrey;
+        return Colors.blueGrey[300]!;
       case "mist":
-        return Colors.teal;
+        return Colors.teal[100]!;
       case "patchy rain possible":
       case "light rain":
       case "moderate rain":
       case "heavy rain":
-        return Colors.blue;
+        return Colors.blue[100]!;
       case "patchy snow possible":
       case "light snow":
       case "moderate snow":
       case "heavy snow":
-        return Colors.blueGrey;
+        return Colors.blueGrey[200]!;
       case "thundery outbreaks possible":
       case "rain with thunder":
-        return Colors.purple;
+        return Colors.purple[100]!;
       case "blizzard":
-        return Colors.cyan;
+        return Colors.cyan[100]!;
       case "fog":
       case "freezing fog":
-        return Colors.indigo;
+        return Colors.indigo[100]!;
       case "light drizzle":
       case "freezing drizzle":
       case "sleet":
-        return Colors.blue;
+        return Colors.blue[50]!;
       case "ice pellets":
-        return Colors.green;
+        return Colors.green[200]!;
       default:
-        return Colors.blueGrey;
+        return Colors.blueGrey[400]!;
     }
   }
 }
